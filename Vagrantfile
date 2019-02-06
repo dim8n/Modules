@@ -12,16 +12,13 @@ Vagrant.configure("2") do |config|
 	end
 
 	File.open("workers.properties", "w") do |f|			#generating worker.properties file
-		f.write("worker.list=myworker\n")
-		f.write("\n")
+		f.write("worker.list=myworker\n\n")
 		for i in 1..$TOMCAT_COUNT
 			f.write("worker.myworker#{i}.port=8009\n")
 			f.write("worker.myworker#{i}.host=inserver#{i}\n")
-			f.write("worker.myworker#{i}.type=ajp13\n")
-			f.write("\n")
+			f.write("worker.myworker#{i}.type=ajp13\n\n")
 		end
-		f.write("worker.myworker.type=lb\n")
-		f.write("\n")
+		f.write("worker.myworker.type=lb\n\n")
 		f.write("worker.myworker.balance_workers=myworker1")
 		for i in 2..$TOMCAT_COUNT
 			f.write(",myworker#{i}")
@@ -36,8 +33,7 @@ Vagrant.configure("2") do |config|
 		f.write("JkShmFile /tmp/shm\n")
 		f.write("JkLogFile logs/mod_jk.log\n")
 		f.write("JkLogLevel info\n")
-		f.write("JkMount /app1/* myworker\n")
-		f.write("\n")
+		f.write("JkMount /app1/* myworker\n\n")
 		f.close
 	end
 
