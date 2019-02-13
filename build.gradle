@@ -13,24 +13,40 @@ repositories {
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
-    implementation 'com.google.guava:guava:27.0.1-jre'
+    //implementation 'com.google.guava:guava:27.0.1-jre'
     implementation 'log4j:log4j:1.2.17'
     implementation 'commons-io:commons-io:2.6'
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
 
+task confTask {
+  println 'This task is configtask'
+}
+
 task incVersion {
   doLast {
-      def majorVer, minorVer, patchVer
-      majorVer = project.property('version')[0..0]
-      minorVer = project.property('version')[2..2]
-      patchVer = project.property('version')[4..4]
-      patchVer++
-      println 'This will increase version'
-      println majorVer+'.'+minorVer+'.'+patchVer
+    def majorVer, minorVer, patchVer
+    def resVer
+      
+    print 'This will increase version from '
+	print project.property('version')
+	print ' to '
 
-      //def pw = new File('textfile.txt').newPrintWriter()
-      //pw.println("new line")
+    majorVer = project.property('version').tokenize('.')[0] as Short
+    minorVer = project.property('version').tokenize('.')[1] as Short
+    patchVer = project.property('version').tokenize('.')[2] as Short
+    patchVer++
+    resVer =  majorVer+'.'+minorVer+'.'+patchVer
+    println resVer
+
+    //def pw = new File('textfile.txt').newPrintWriter()
+    //pw.println("new line")
   }
+}
+
+task writeVer(dependsOn: incVersion) {
+	doLast {
+		println 'This will write a version to greetings.txt'
+	}
 }
