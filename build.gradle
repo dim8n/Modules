@@ -1,21 +1,26 @@
 apply plugin: 'war'
 
+task updGreet {
+  doLast {
+    println "This will add a version ${version} to ${buildDir}/resources/main/greeting.txt "
+    def outF= new File("${buildDir}/resources/main/greeting.txt")
+    if(!outF.exists()) {
+      outF.createNewFile()
+    }
+    def inF= new File("${projectDir}/src/main/resources/greeting.txt")
+    def lineF = inF.readLines()[0]
+    //println 'from file '+inF+' '+lineF
+    outF.write(lineF+' '+project.property('version'))
+  }
+}
+
+build.finalizedBy(updGreet)
+
 war {
   archiveName 'app.war'
   manifest {
     attributes("Implementation-Title": project.name, "Implementation-Version": project.version, "Implementation-Timestamp": new Date())
   }
-  
-  //нужно сделать чтобы эта часть выполнялась только при билде, а не при конфигурации
-  print "This will write a version to ${buildDir}/resources/main/greetings.txt "
-  println project.property('version')
-  def out= new File("greeting.txt")
-  if(!out.exists()) {
-    out.createNewFile()
-  }
-  def lineF = out.readLines()[0]
-  //оригинальный текст файла взять из src
-  out.write(lineF+' '+project.property('version'))
 }
 
 repositories {
@@ -45,7 +50,7 @@ task incTask {
     patchVer++
     resVer =  majorVer+'.'+minorVer+'.'+patchVer
     println resVer
-    
+
     ant.propertyfile(file: "gradle.properties") {
         entry(key: "version", value: resVer)
     }
