@@ -3,13 +3,12 @@ apply plugin: 'war'
 task updGreet {
   doLast {
     println "This will add a version ${version} to ${buildDir}/resources/main/greeting.txt "
-    def outF= new File("${buildDir}/resources/main/greeting.txt")
+    def outF = new File("${buildDir}/resources/main/greeting.txt")
     if(!outF.exists()) {
       outF.createNewFile()
     }
-    def inF= new File("${projectDir}/src/main/resources/greeting.txt")
+    def inF = new File("${projectDir}/src/main/resources/greeting.txt")
     def lineF = inF.readLines()[0]
-    //println 'from file '+inF+' '+lineF
     outF.write(lineF+' '+project.property('version'))
   }
 }
