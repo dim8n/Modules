@@ -1,19 +1,15 @@
 apply plugin: 'war'
 
-task updGreet {
-  doLast {
-    println "This will add a version ${version} to ${buildDir}/resources/main/greeting.txt "
-    def outF = new File("${buildDir}/resources/main/greeting.txt")
-    if(!outF.exists()) {
-      outF.createNewFile()
-    }
-    def inF = new File("${projectDir}/src/main/resources/greeting.txt")
-    def lineF = inF.readLines()[0]
-    outF.write(lineF+' '+project.property('version'))
+processResources.doLast {
+  println "This will add a version ${version} to ${buildDir}/resources/main/greeting.txt "
+  def outF = new File("${buildDir}/resources/main/greeting.txt")
+  if(!outF.exists()) {
+    outF.createNewFile()
   }
+  def inF = new File("${projectDir}/src/main/resources/greeting.txt")
+  def lineF = inF.readLines()[0]
+  outF.write(lineF+' '+project.property('version'))
 }
-
-processResources.finalizedBy(updGreet)
 
 war {
   archiveName 'app.war'
@@ -35,24 +31,22 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 }
 
-task incTask {
-  doLast {
-    def majorVer, minorVer, patchVer
-    def resVer
+task incTask doLast {
+  def majorVer, minorVer, patchVer
+  def resVer
 
-    print 'This will increase version '
-    print project.property('version')
-    print ' => '
-    majorVer = project.property('version').tokenize('.')[0] as Short
-    minorVer = project.property('version').tokenize('.')[1] as Short
-    patchVer = project.property('version').tokenize('.')[2] as Short
-    patchVer++
-    resVer =  majorVer+'.'+minorVer+'.'+patchVer
-    println resVer
+  print 'This will increase version '
+  print project.property('version')
+  print ' => '
+  majorVer = project.property('version').tokenize('.')[0] as Short
+  minorVer = project.property('version').tokenize('.')[1] as Short
+  patchVer = project.property('version').tokenize('.')[2] as Short
+  patchVer++
+  resVer =  majorVer+'.'+minorVer+'.'+patchVer
+  println resVer
 
-    ant.propertyfile(file: "gradle.properties") {
-        entry(key: "version", value: resVer)
-    }
-    print 'and write to gradle.properties file'
+  ant.propertyfile(file: "gradle.properties") {
+      entry(key: "version", value: resVer)
   }
+  print 'and write to gradle.properties file'
 }
