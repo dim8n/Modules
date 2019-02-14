@@ -1,6 +1,6 @@
 apply plugin: 'war'
 
-processResources.doLast {
+task writeGreet doLast {
   println "This will add a version ${version} to ${buildDir}/resources/main/greeting.txt "
   def outF = new File("${buildDir}/resources/main/greeting.txt")
   if(!outF.exists()) {
@@ -10,6 +10,10 @@ processResources.doLast {
   def lineF = inF.readLines()[0]
   outF.write(lineF+' '+project.property('version'))
 }
+
+writeGreet.dependsOn(processResources)
+build.dependsOn(writeGreet)
+build.shouldRunAfter(writeGreet)
 
 war {
   archiveName 'app.war'
