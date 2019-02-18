@@ -1,1 +1,1 @@
-hello Gradle
+This is my first java application
