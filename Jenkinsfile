@@ -9,6 +9,8 @@ node {
         if (isUnix()) {
             sh './gradlew incTask'
             sh './gradlew clean build'
+            sh 'git config --global user.name "dim8n"'
+            sh 'git config --global user.email "d.elizarov@gmail.com"'
         } else {
             bat 'gradlew.bat incTask'
             bat 'gradlew.bat clean build'
@@ -72,11 +74,13 @@ node {
         if (isUnix()) {
             sh 'git add .'
             sh 'git commit -m "Version changed"'
-            sh 'git push origin task6'
+            sh 'git config --global user.name "dim8n"'
+            sh 'git config --global user.email "d.elizarov@gmail.com"'
+            //sh 'git push origin task6'
         } else {
             bat 'git add .'
             bat 'git commit -m "Version changed"'
-            bat 'git push origin task6'
+            //bat 'git push origin task6'
         }
     }
 }
