@@ -26,9 +26,9 @@ node {
         verString = properties."$runtimeString"
     }
     
-    stage('Results') {
+    stage('Upload to Repo') {
         //echo verString
-        def comString = "curl -XPUT -u admin:admin123 -T build/libs/app.war http://127.0.0.1:8081/repository/Task6/$verString/"
+        def comString = "curl --noproxy localhost,127.0.0.1 -XPUT -u admin:admin123 -T build/libs/app.war http://127.0.0.1:8081/repository/Task6/$verString/"
         echo comString        
 
         if (isUnix()) {
@@ -36,5 +36,38 @@ node {
         } else {    
             bat comString
         }
+    }
+    
+    stage('Deploy to tomcats'){
+        echo 'This will upload app.war to tomcat servers'
+        //	http://localhost:8090/manager/deploy?path=/app&war=http://127.0.0.1:8081/repository/Task6/1.0.7/app.war
+        if (isUnix()) {
+            echo 'This is Linux'
+        } else {
+            bat 'copy /Y build\\libs\\app.war "c:/Program Files (x86)/Apache Software Foundation/Tomcat 9.0/webapps/"'
+        }
+    }
+    
+    stage('Verify deploy correct'){
+        echo 'Thid verify a MANIFEST.MF file on tomcat server'
+    }
+
+    stage('Verify HTTP request correct'){
+        echo 'Thid verify an HTTP request from tomcat server'
+        def response = httpRequest 'http://127.0.0.1:8090/app/'
+        if(response.content.contains(verString)) {
+            println 'Version on the tomcat is correct'
+            //currentBuild.result="SUCCES";
+        } else {
+            //currentBuild.result="FAILURE";
+            println "Version on the tomcat is incorrect!!!"
+        }
+    }
+    
+    stage('Commit changes on git'){
+        echo 'This will sync changes on git'
+        bat 'git add gradle.properties'
+        bat 'git commit -m "Version changed"'
+        bat 'git push --set-upstream origin task6'
     }
 }
