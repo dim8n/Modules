@@ -43,6 +43,9 @@ node {
         //	http://localhost:8090/manager/deploy?path=/app&war=http://127.0.0.1:8081/repository/Task6/1.0.7/app.war
         if (isUnix()) {
             echo 'This is Linux'
+            //sh 'scp -P 2200 build/libs/app.war root@127.0.0.1:/usr/share/tomcat/webapps/'
+            //sh 'scp -P 2201 build/libs/app.war root@127.0.0.1:/usr/share/tomcat/webapps/'
+            
         } else {
             bat 'copy /Y build\\libs\\app.war "c:/Program Files (x86)/Apache Software Foundation/Tomcat 9.0/webapps/"'
         }
@@ -54,7 +57,7 @@ node {
 
     stage('Verify HTTP request correct'){
         echo 'Thid verify an HTTP request from tomcat server'
-        def response = httpRequest 'http://127.0.0.1:8090/app/'
+        def response = httpRequest 'http://127.0.0.1:8400/app/'
         if(response.content.contains(verString)) {
             println 'Version on the tomcat is correct'
             //currentBuild.result="SUCCES";
@@ -66,8 +69,14 @@ node {
     
     stage('Commit changes on git'){
         echo 'This will sync changes on git'
-        bat 'git add .'
-        bat 'git commit -m "Version changed"'
-        //bat 'git push origin task6'
+        if (isUnix()) {
+            sh 'git add .'
+            sh 'git commit -m "Version changed"'
+            sh 'git push origin task6'
+        } else {
+            bat 'git add .'
+            bat 'git commit -m "Version changed"'
+            bat 'git push origin task6'
+        }
     }
 }
