@@ -66,8 +66,8 @@ node {
     
     stage('Commit changes on git'){
         echo 'This will sync changes on git'
-        bat 'git add gradle.properties'
+        bat 'git add .'
         bat 'git commit -m "Version changed"'
-        bat 'git push --set-upstream origin task6'
+        //bat 'git push origin task6'
     }
 }
