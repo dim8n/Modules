@@ -41,7 +41,13 @@ node {
     }
     
     stage('Deploy to tomcats'){
-        echo 'This will upload app.war to tomcat servers'
+        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker1&vwa=1"'
+        echo 'This will upload app.war to tomcat server1'
+        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker1&vwa=0"'
+        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker2&vwa=1"'
+        echo 'This will upload app.war to tomcat server2'
+        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker2&vwa=0"'
+
         //	http://localhost:8090/manager/deploy?path=/app&war=http://127.0.0.1:8081/repository/Task6/1.0.7/app.war
         if (isUnix()) {
             echo 'This is Linux'
