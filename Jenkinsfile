@@ -86,7 +86,7 @@ node {
         echo 'This will sync changes on git'
         if (isUnix()) {
             sh 'git add gradle.properties'
-            sh 'git commit -m "Version changed"'
+            sh 'git commit -m "Version changed to '+verString+'"'
             sh 'git config --global user.name "dim8n"'
             sh 'git config --global user.email "d.elizarov@gmail.com"'
             withCredentials([usernamePassword(credentialsId: 'gitCreds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
