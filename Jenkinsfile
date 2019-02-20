@@ -29,14 +29,14 @@ node {
     }
     
     stage('Upload to Repo') {
-        //echo verString
-        def comString = "curl --noproxy localhost,127.0.0.1 -XPUT -u admin:admin123 -T build/libs/app.war http://127.0.0.1:8081/repository/Task6/$verString/"
-        echo comString        
-
-        if (isUnix()) {
-            sh comString
-        } else {    
-            bat comString
+        withCredentials([usernamePassword(credentialsId: 'Nexus', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            def comString = "curl --noproxy localhost,127.0.0.1 -XPUT -u $USERNAME:$PASSWORD -T build/libs/app.war http://127.0.0.1:8081/repository/Task6/$verString/"
+            echo comString
+            if (isUnix()) {
+                sh comString
+            } else {    
+                bat comString
+            }
         }
     }
     
@@ -59,8 +59,15 @@ node {
 
     stage('Verify HTTP request correct'){
         echo 'Thid verify an HTTP request from tomcat server'
-        def response = httpRequest 'http://127.0.0.1:8400/app/'
-        if(response.content.contains(verString)) {
+        def respString
+        if (isUnix()) { 
+            def response = httpRequest 'http://127.0.0.1:8400/app/'
+            respString = response.content
+        } else {
+            def response = httpRequest 'http://127.0.0.1:8090/app/'
+            respString = response.content
+        }
+        if(respString.contains(verString)) {
             println 'Version on the tomcat is correct'
             //currentBuild.result="SUCCES";
         } else {
