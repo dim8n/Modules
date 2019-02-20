@@ -30,7 +30,7 @@ node {
     
     stage('Upload to Repo') {
         withCredentials([usernamePassword(credentialsId: 'Nexus', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-            def comString = "curl --noproxy localhost,127.0.0.1 -XPUT -u $USERNAME:$PASSWORD -T build/libs/app.war http://127.0.0.1:8081/repository/Task6/$verString/"
+            def comString = "curl --noproxy localhost,127.0.0.1 -XPUT -u $USERNAME:$PASSWORD -T build/libs/app.war http://127.0.0.1:8081/repository/snapshots/test/$verString/"
             echo comString
             if (isUnix()) {
                 sh comString
@@ -85,11 +85,13 @@ node {
     stage('Commit changes on git'){
         echo 'This will sync changes on git'
         if (isUnix()) {
-            sh 'git add .'
+            sh 'git add gradle.properties'
             sh 'git commit -m "Version changed"'
             sh 'git config --global user.name "dim8n"'
             sh 'git config --global user.email "d.elizarov@gmail.com"'
-            //sh 'git push origin task6'
+            withCredentials([usernamePassword(credentialsId: 'gitCreds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git task6'
+            }
         } else {
             bat 'git add .'
             bat 'git commit -m "Version changed"'
