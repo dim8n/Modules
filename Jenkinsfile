@@ -104,6 +104,10 @@ node {
             sh 'git config --global user.email "d.elizarov@gmail.com"'
             withCredentials([usernamePassword(credentialsId: 'gitCreds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git task6'
+                sh 'git checkout master'
+                sh 'git merge task6'
+                sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git master'
+                sh 'git tag '+verString
             }
         } else {
             bat 'git add gradle.properties'
