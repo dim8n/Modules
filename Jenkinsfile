@@ -41,21 +41,21 @@ node {
     }
     
     stage('Deploy to tomcats'){
-        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker1&vwa=1"'
-        echo 'This will upload app.war to tomcat server1'
-        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker1&vwa=0"'
-        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker2&vwa=1"'
-        echo 'This will upload app.war to tomcat server2'
-        sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker2&vwa=0"'
-
         //	http://localhost:8090/manager/deploy?path=/app&war=http://127.0.0.1:8081/repository/Task6/1.0.7/app.war
         if (isUnix()) {
             echo 'This is Linux'
-            //sh 'scp -P 2200 build/libs/app.war root@127.0.0.1:/usr/share/tomcat/webapps/'
-            //sh 'scp -P 2201 build/libs/app.war root@127.0.0.1:/usr/share/tomcat/webapps/'
-            
+            sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker1&vwa=1"'
+            echo 'This will upload app.war to tomcat server1'
+            sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker1&vwa=0"'
+            sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker2&vwa=1"'
+            echo 'This will upload app.war to tomcat server2'
+            sh 'curl "http://127.0.0.1:8400/jkmanager?cmd=update&from=list&w=myworker&sw=myworker2&vwa=0"'
         } else {
-            bat 'copy /Y build\\libs\\app.war "c:/Program Files (x86)/Apache Software Foundation/Tomcat 9.0/webapps/"'
+            withCredentials([usernamePassword(credentialsId: 'tomcatCreds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                bat "curl -o app.war http://127.0.0.1:8081/repository/snapshots/test/$verString/app.war"
+                bat "curl -u $USERNAME:$PASSWORD http://localhost:8090/manager/text/undeploy?war=app.war"
+                bat "curl -XPUT -u $USERNAME:$PASSWORD -T app.war http://localhost:8090/manager/text/deploy?path=/app"
+            }
         }
     }
     
@@ -93,9 +93,14 @@ node {
                 sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git task6'
             }
         } else {
-            bat 'git add .'
-            bat 'git commit -m "Version changed"'
-            //bat 'git push origin task6'
+            bat 'git add gradle.properties'
+            bat 'git commit -m "Version changed to '+verString+'"'
+            bat 'git config --global user.name "dim8n"'
+            bat 'git config --global user.email "d.elizarov@gmail.com"'
+            withCredentials([usernamePassword(credentialsId: 'gitCreds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                bat 'git push --set-upstream http://dim8n:469Wa880ca@github.com/dim8n/Modules.git task6'
+                //bat 'git push --set-upstream http://USERNAME:PASSWORD@github.com/dim8n/Modules.git task6'
+            }
         }
     }
 }
