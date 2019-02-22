@@ -81,7 +81,7 @@ node {
             sh 'git checkout master'
             sh 'git merge task6'
             sh 'git tag v'+verString
-            sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git origin --tags'
+            sh 'git push --tags http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git'
         }
     }
 }
