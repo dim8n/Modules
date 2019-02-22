@@ -6,13 +6,8 @@ node {
     }
     
     stage('Build') {
-        if (isUnix()) {
-            sh './gradlew incTask'
-            sh './gradlew clean build'
-        } else {
-            bat 'gradlew.bat incTask'
-            bat 'gradlew.bat clean build'
-        }
+        sh './gradlew incTask'
+        sh './gradlew clean build'
     }
     
     stage ('GetVersion') {
