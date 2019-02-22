@@ -80,8 +80,8 @@ node {
             sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git task6'
             sh 'git checkout master'
             sh 'git merge task6'
-            sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git master'
             sh 'git tag v'+verString
+            sh 'git push --set-upstream http://$USERNAME:$PASSWORD@github.com/dim8n/Modules.git origin '+verString
         }
     }
 }
