@@ -51,6 +51,5 @@ services:
       - elasticsearch
 
 networks:
-
   elk:
     driver: bridge
