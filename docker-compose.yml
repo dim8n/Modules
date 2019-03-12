@@ -17,7 +17,7 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash-oss:6.6.1
     volumes:
-      - ./logstash/:/usr/shate/logstash/pipeline
+      - ./logstash/:/usr/share/logstash/pipeline
     ports:
       - "5000:5000"
       - "5044:5044"
