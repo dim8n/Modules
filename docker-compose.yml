@@ -4,8 +4,6 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.1
-    volumes:
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -16,8 +14,6 @@ services:
 
   logstash:
     image: docker.elastic.co/logstash/logstash-oss:6.6.1
-    volumes:
-      - ./logstash/:/usr/share/logstash/pipeline
     ports:
       - "5000:5000"
       - "5044:5044"
@@ -31,8 +27,6 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.6.1
-    volumes:
-      - ./kibana/:/usr/share/kibana/config
     ports:
       - "5601:5601"
     networks:
@@ -41,12 +35,14 @@ services:
       - elasticsearch
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:6.6.1
+    image: docker.elastic.co/beats/filebeat-oss:6.6.1
     volumes:
-      - ./filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
-      - /var/log/:/etc/filebeat/logs
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/log/:/tmp/log/:ro
     networks:
       - elk
+    environment:
+      - ELASTICSEARCH_HOSTS="elasticsearch"
     depends_on:
       - elasticsearch
 
