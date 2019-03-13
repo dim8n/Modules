@@ -12,4 +12,10 @@ echo "sslcacert=/etc/pki/tls/certs/ca-bundle.crt" >> /etc/yum.repos.d/grafana.re
 
 RUN yum install -y grafana && yum clean all
 
+WORKDIR /grafana
+
+RUN cd /usr/share/grafana && grafana-cli admin reset-admin-password admin321 --config=/etc/grafana/grafana.ini
+
 EXPOSE 3000
+
+CMD ["grafana-server"]

@@ -21,4 +21,4 @@ RUN yum -y install collectd && yum clean all
 #RUN chkconfig collectd on; chkconfig --add collectd_automated_setup; chkconfig collectd_automated_setup on
 #PROXY_PLACEHOLDER2
 
-CMD ["collectd" "-f"]
+CMD ["collectd"]
