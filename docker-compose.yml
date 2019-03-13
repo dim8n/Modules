@@ -45,8 +45,6 @@ services:
       - /var/log/:/tmp/log/:ro
     networks:
       - elk
-    environment:
-      - ELASTICSEARCH_HOSTS="elasticsearch"
     depends_on:
       - elasticsearch
 
