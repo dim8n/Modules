@@ -30,6 +30,8 @@ filebeat.inputs:
     - /tmp/log/*
     #- c:\programdata\elasticsearch\logs\*
 
+  #encoding: utf-8
+  
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
   # matching any regular expression from the list.
   #exclude_lines: ['^DBG']
@@ -147,9 +149,9 @@ setup.kibana:
 # Configure what output to use when sending the data collected by the beat.
 
 #-------------------------- Elasticsearch output ------------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["elasticsearch:9200"]
+  #hosts: ["elasticsearch:9200"]
 
   # Enabled ilm (beta) to use index lifecycle management instead daily indices.
   #ilm.enabled: false
@@ -160,9 +162,9 @@ output.elasticsearch:
   #password: "changeme"
 
 #----------------------------- Logstash output --------------------------------
-#output.logstash:
+output.logstash:
   # The Logstash hosts
-  #hosts: ["localhost:5044"]
+  hosts: ["logstash:5044"]
 
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications
