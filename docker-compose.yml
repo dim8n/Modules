@@ -5,11 +5,16 @@ services:
   collectd:
     build:
       context: collectd/
+    volumes:
+      - ./collectd/config/collectd.conf:/etc/collectd.conf:ro
     networks:
       - elk
 
   influxdb:
     image: influxdb:latest
+    volumes:
+      - ./influxdb/config/influxdb.conf:/etc/influxdb.conf:ro
+      - ./influxdb/config/types.db:/usr/share/collectd/types.db
     ports:
       - "8086:8086"
       - "25826:25826/udp"
