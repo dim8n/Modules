@@ -2,51 +2,23 @@ version: '2'
 
 services:
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.1
-    volumes:
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+  collectd:
+    build:
+      context: collectd/
     networks:
       - elk
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.6.1
-    volumes:
-      - ./logstash/:/usr/share/logstash/pipeline
-    ports:
-      - "5000:5000"
-      - "5044:5044"
-      - "9600:9600"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+  influxdb:
+    build:
+      context: influxdb/
     networks:
       - elk
-    depends_on:
-      - elasticsearch
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana-oss:6.6.1
-    ports:
-      - "5601:5601"
+  grafana:
+    build:
+      context: grafana/
     networks:
       - elk
-    depends_on:
-      - elasticsearch
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat-oss:6.6.1
-    volumes:
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/log/:/tmp/log/:ro
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
 
 networks:
 
