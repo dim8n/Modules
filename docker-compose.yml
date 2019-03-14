@@ -21,5 +21,7 @@ services:
   grafana:
     build:
       context: grafana/
+    volumes:
+      - ./grafana/config/grafana.db:/usr/share/grafana/data/grafana.db
     ports:
       - "3000:3000"
