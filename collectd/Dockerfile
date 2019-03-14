@@ -1,13 +1,13 @@
 FROM centos
 
-ENV container docker
+#ENV container docker
 
 #PROXY_PLACEHOLDER1
 #COPY *.sh /root/
 #COPY bashrc /root/.bashrc
 #COPY collectd_automated_setup /etc/init.d/
 
-WORKDIR /root
+#WORKDIR /root
 
 RUN yum -y install epel-release
 RUN yum -y install collectd && yum clean all
@@ -21,4 +21,4 @@ RUN yum -y install collectd && yum clean all
 #RUN chkconfig collectd on; chkconfig --add collectd_automated_setup; chkconfig collectd_automated_setup on
 #PROXY_PLACEHOLDER2
 
-CMD ["collectd"]
+CMD ["/usr/sbin/collectd", "-f"]
