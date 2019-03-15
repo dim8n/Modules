@@ -13,7 +13,6 @@ services:
     volumes:
       - ./influxdb/config/influxdb.conf:/etc/influxdb/influxdb.conf:ro
       - ./influxdb/config/types.db:/usr/share/collectd/types.db:ro
-      - /var/lib/influxdb
     ports:
       - "8086:8086"
       - "25826:25826/udp"
