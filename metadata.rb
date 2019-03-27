@@ -4,7 +4,7 @@ maintainer_email 'dzmitry_yelizarau@epam.com'
 license 'All Rights Reserved'
 description 'Installs/Configures task9-cookbook'
 long_description 'Installs/Configures task9-cookbook'
-version '0.2.14'
+version '0.3.5'
 chef_version '>= 13.0'
 
 # The `issues_url` points to the location where issues for this cookbook are
