@@ -7,7 +7,7 @@
 #package 'docker.io' #for Ubuntu and Mint
 
 case node[:platform]
-  when 'ubuntu','debian'
+  when 'ubuntu','debian', 'mint'
   package 'docker.io' do
     action :install
   end
