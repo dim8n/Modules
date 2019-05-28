@@ -4,12 +4,16 @@ provider "aws" {
     region = "eu-west-3"
 }
 
+data "aws_vpc" "selected" {
+}
+
 resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
   name        = "TF_HTTP_INTERNAL"
   description = "HTTP_ONLY_INTERNAL"
   tags = {
       Name = "TF_HTTP_ONLY_INTERNAL"
   }
+  #vpc_id   = "${aws_vpc.main.id}"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -30,7 +34,7 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
   tags = {
       Name = "TF_HTTP_ONLY"
   }
-  
+  #vpc_id   = "${aws_vpc.main.id}"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -45,16 +49,6 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
   }
 }
 
-#resource "aws_instance" "TF_Web_Server" {
-#    ami = "ami-0ebb3a801d5fb8b9b"
-#    instance_type = "t2.micro"
-#    tags {
-#        "Name" = "TF_Web_Server"
-#    }
-#    user_data = "${file("start_script.sh")}"
-#    security_groups  = ["TF_HTTP"]
-#}
-
 resource "aws_launch_configuration" "as_conf" {
   name          = "TF_l_conf"
   image_id      = "ami-0ebb3a801d5fb8b9b"
@@ -68,3 +62,14 @@ resource "aws_launch_configuration" "as_conf" {
     delete_on_termination = true
   }
 }
+
+resource "aws_lb_target_group" "TF_target_group" {
+  name     = "TF-target-group"
+  port     = 80
+  protocol = "HTTP"
+  target_type = "instance"
+  vpc_id   = "${data.aws_vpc.selected.id}"
+}
+
+# load balancer
+# auto scaling group
