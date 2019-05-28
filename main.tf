@@ -7,8 +7,8 @@ provider "aws" {
 resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
   name        = "TF_HTTP_INTERNAL"
   description = "HTTP_ONLY_INTERNAL"
-  tags {
-      "Name" = "TF_HTTP_ONLY_INTERNAL"
+  tags = {
+      Name = "TF_HTTP_ONLY_INTERNAL"
   }
   ingress {
     from_port   = 80
@@ -27,9 +27,10 @@ resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
 resource "aws_security_group" "TF_HTTP_ONLY" {
   name        = "TF_HTTP"
   description = "HTTP_ONLY"
-  tags {
-      "Name" = "TF_HTTP_ONLY"
+  tags = {
+      Name = "TF_HTTP_ONLY"
   }
+  
   ingress {
     from_port   = 80
     to_port     = 80
@@ -55,11 +56,11 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
 #}
 
 resource "aws_launch_configuration" "as_conf" {
-  name          = "TF_lconf"
+  name          = "TF_l_conf"
   image_id      = "ami-0ebb3a801d5fb8b9b"
   instance_type = "t2.micro"
   user_data = "${file("start_script.sh")}"
-  security_groups  = ["TF_HTTP"]
+  security_groups  = ["${aws_security_group.TF_HTTP_ONLY.id}"]
   enable_monitoring = "false"
   root_block_device {
     volume_type           = "gp2"
