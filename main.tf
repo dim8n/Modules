@@ -18,7 +18,7 @@ resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
     from_port   = 80
     to_port     = 80
     protocol    = "TCP"
-    cidr_blocks     = ["172.31.0.0/16"]
+    cidr_blocks     = ["172.31.0.0/16"] # нужно настроить автоматически брать из зоны адрес сети
   }
   egress {
     from_port       = 0
@@ -77,7 +77,7 @@ resource "aws_lb" "TF_ALB" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
-  subnets         = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"]
+  subnets         = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"] # список зон нужно настроить брать автоматически
 }
 resource "aws_lb_listener" "TF_ALB" {  
   load_balancer_arn = "${aws_lb.TF_ALB.arn}"  
@@ -101,5 +101,5 @@ resource "aws_autoscaling_group" "TF_auto_scaling_group" {
   force_delete              = true
   target_group_arns         = ["${aws_lb_target_group.TF_target_group.arn}"]
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  vpc_zone_identifier       = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"]
+  vpc_zone_identifier       = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"] # список зон нужно настроить брать автоматически
 }
