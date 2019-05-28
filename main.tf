@@ -7,13 +7,13 @@ provider "aws" {
 data "aws_vpc" "selected" {
 }
 
+# security groups
 resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
   name        = "TF_HTTP_INTERNAL"
   description = "HTTP_ONLY_INTERNAL"
   tags = {
       Name = "TF_HTTP_ONLY_INTERNAL"
   }
-  #vpc_id   = "${data.aws_vpc.selected.id}"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -34,7 +34,6 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
   tags = {
       Name = "TF_HTTP_ONLY"
   }
-  #vpc_id   = "${data.aws_vpc.selected.id}"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -49,6 +48,7 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
   }
 }
 
+# launch configuration
 resource "aws_launch_configuration" "as_conf" {
   name          = "TF_launch_conf"
   image_id      = "ami-0ebb3a801d5fb8b9b"
@@ -63,6 +63,7 @@ resource "aws_launch_configuration" "as_conf" {
   }
 }
 
+# target group fot load balancer
 resource "aws_lb_target_group" "TF_target_group" {
   name     = "TF-target-group"
   port     = 80
@@ -79,6 +80,8 @@ resource "aws_lb" "TF_ALB" {
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
   subnets         = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"] # список зон нужно настроить брать автоматически
 }
+
+#listener for load balancer
 resource "aws_lb_listener" "TF_ALB" {  
   load_balancer_arn = "${aws_lb.TF_ALB.arn}"  
   port              = 80  
@@ -93,11 +96,11 @@ resource "aws_lb_listener" "TF_ALB" {
 # auto scaling group
 resource "aws_autoscaling_group" "TF_auto_scaling_group" {
   name                      = "TF_auto_scaling_group"
-  max_size                  = 5
-  min_size                  = 0
+  max_size                  = 7
+  min_size                  = 1
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  desired_capacity          = 4
+  desired_capacity          = 7
   force_delete              = true
   target_group_arns         = ["${aws_lb_target_group.TF_target_group.arn}"]
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
