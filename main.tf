@@ -50,7 +50,7 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
 }
 
 resource "aws_launch_configuration" "as_conf" {
-  name          = "TF_l_conf"
+  name          = "TF_launch_conf"
   image_id      = "ami-0ebb3a801d5fb8b9b"
   instance_type = "t2.micro"
   user_data = "${file("start_script.sh")}"
@@ -87,7 +87,7 @@ resource "aws_lb" "TF_ALB" {
 resource "aws_lb_listener" "TF_ALB" {  
   load_balancer_arn = "${aws_lb.TF_ALB.arn}"  
   port              = 80  
-  protocol          = "TCP"
+  protocol          = "HTTP"
   
   default_action {    
     target_group_arn = "${aws_lb_target_group.TF_target_group.arn}"

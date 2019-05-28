@@ -1,7 +1,8 @@
 # Ignore Gradle project-specific cache directory
 .gradle
 .terraform
-terraform
+terraform.tfstate.backup
+terraform.tfstate
 
 # Ignore Gradle build output directory
 build
