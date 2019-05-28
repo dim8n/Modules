@@ -13,7 +13,7 @@ resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
   tags = {
       Name = "TF_HTTP_ONLY_INTERNAL"
   }
-  #vpc_id   = "${aws_vpc.main.id}"
+  #vpc_id   = "${data.aws_vpc.selected.id}"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -34,7 +34,7 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
   tags = {
       Name = "TF_HTTP_ONLY"
   }
-  #vpc_id   = "${aws_vpc.main.id}"
+  #vpc_id   = "${data.aws_vpc.selected.id}"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -54,7 +54,7 @@ resource "aws_launch_configuration" "as_conf" {
   image_id      = "ami-0ebb3a801d5fb8b9b"
   instance_type = "t2.micro"
   user_data = "${file("start_script.sh")}"
-  security_groups  = ["${aws_security_group.TF_HTTP_ONLY.id}"]
+  security_groups  = ["${aws_security_group.TF_HTTP_INTERNAL_ONLY.id}"]
   enable_monitoring = "false"
   root_block_device {
     volume_type           = "gp2"
@@ -72,4 +72,27 @@ resource "aws_lb_target_group" "TF_target_group" {
 }
 
 # load balancer
+
+resource "aws_lb" "TF_ALB" {
+  name               = "TF-app-load-balancer"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
+  subnets         = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"]
+  #availability_zones = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
+  #subnets            = ["${aws_subnet.public.*.id}"]
+
+  #enable_deletion_protection = true
+}
+resource "aws_lb_listener" "TF_ALB" {  
+  load_balancer_arn = "${aws_lb.TF_ALB.arn}"  
+  port              = 80  
+  protocol          = "TCP"
+  
+  default_action {    
+    target_group_arn = "${aws_lb_target_group.TF_target_group.arn}"
+    type             = "forward"  
+  }
+}
+
 # auto scaling group
