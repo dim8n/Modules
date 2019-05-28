@@ -72,17 +72,12 @@ resource "aws_lb_target_group" "TF_target_group" {
 }
 
 # load balancer
-
 resource "aws_lb" "TF_ALB" {
   name               = "TF-app-load-balancer"
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
   subnets         = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"]
-  #availability_zones = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
-  #subnets            = ["${aws_subnet.public.*.id}"]
-
-  #enable_deletion_protection = true
 }
 resource "aws_lb_listener" "TF_ALB" {  
   load_balancer_arn = "${aws_lb.TF_ALB.arn}"  
@@ -96,7 +91,6 @@ resource "aws_lb_listener" "TF_ALB" {
 }
 
 # auto scaling group
-
 resource "aws_autoscaling_group" "TF_auto_scaling_group" {
   name                      = "TF_auto_scaling_group"
   max_size                  = 5
