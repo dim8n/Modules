@@ -55,6 +55,7 @@ resource "aws_launch_configuration" "as_conf" {
   instance_type = "t2.micro"
   user_data = "${file("start_script.sh")}"
   security_groups  = ["${aws_security_group.TF_HTTP_INTERNAL_ONLY.id}"]
+  associate_public_ip_address = "false"
   enable_monitoring = "false"
   root_block_device {
     volume_type           = "gp2"
