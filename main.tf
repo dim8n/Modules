@@ -79,7 +79,7 @@ resource "aws_lb" "TF_ALB" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
-  subnets         = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"] # список зон нужно настроить брать автоматически
+  subnets            = "${var.subnet_ids}"
 }
 
 #listener for load balancer
@@ -95,18 +95,17 @@ resource "aws_lb_listener" "TF_ALB" {
 }
 
 # auto scaling group
-
 resource "aws_autoscaling_group" "TF_auto_scaling_group" {
   name                      = "TF_auto_scaling_group"
   max_size                  = 7
   min_size                  = 0
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  desired_capacity          = 7
+  desired_capacity          = 1
   force_delete              = true
   target_group_arns         = ["${aws_lb_target_group.TF_target_group.arn}"]
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  vpc_zone_identifier       = ["subnet-77cc7e3a","subnet-892e78e0","subnet-9f7f16e4"] # список зон нужно настроить брать автоматически
+  vpc_zone_identifier       = "${var.subnet_ids}" # список зон нужно настроить брать автоматически
   tags = [
       {
         key                 = "Name"
