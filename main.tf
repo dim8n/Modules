@@ -6,6 +6,18 @@ provider "aws" {
 
 data "aws_vpc" "selected" {
 }
+data "aws_subnet_ids" "selected" {
+  vpc_id = "${data.aws_vpc.selected.id}"
+}
+
+#data "aws_subnet" "example" {
+#  count = "${length(data.aws_subnet_ids.example.ids)}"
+#  id    = "${data.aws_subnet_ids.example.ids[count.index]}"
+#}
+
+output "subnets" {
+  value = "${data.aws_subnet_ids.selected.*.ids}"
+}
 
 # security groups
 resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
@@ -80,6 +92,7 @@ resource "aws_lb" "TF_ALB" {
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
   subnets            = "${var.subnet_ids}"
+  #subnets             = "${data.aws_subnet_ids.selected.*.ids}"
 }
 
 #listener for load balancer
