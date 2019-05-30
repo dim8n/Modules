@@ -9,14 +9,9 @@ data "aws_vpc" "selected" {
 data "aws_subnet_ids" "selected" {
   vpc_id = "${data.aws_vpc.selected.id}"
 }
-
-#data "aws_subnet" "example" {
-#  count = "${length(data.aws_subnet_ids.example.ids)}"
-#  id    = "${data.aws_subnet_ids.example.ids[count.index]}"
-#}
-
 output "subnets" {
   value = "${data.aws_subnet_ids.selected.*.ids}"
+  #value = "${element(data.aws_subnet_ids.selected.ids, count.index)}"
 }
 
 # security groups
