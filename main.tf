@@ -9,7 +9,6 @@ data "aws_vpc" "selected" {
 data "aws_subnet_ids" "example" {
   vpc_id = "${data.aws_vpc.selected.id}"
 }
-
 data "aws_subnet" "example" {
   count = "${length(data.aws_subnet_ids.example.ids)}"
   id    = "${tolist(data.aws_subnet_ids.example.ids)[count.index]}"
@@ -59,7 +58,8 @@ resource "aws_security_group" "TF_HTTP_ONLY" {
 # launch configuration
 resource "aws_launch_configuration" "as_conf" {
   name          = "TF_launch_conf"
-  image_id      = "ami-0ebb3a801d5fb8b9b"
+  #image_id      = "ami-0ebb3a801d5fb8b9b"
+  image_id      = "ami-0ebbf2179e615c338"
   instance_type = "t2.micro"
   user_data = "${file("start_script.sh")}"
   security_groups  = ["${aws_security_group.TF_HTTP_INTERNAL_ONLY.id}"]
@@ -87,7 +87,6 @@ resource "aws_lb" "TF_ALB" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
-  #subnets            = "${var.subnet_ids}"
   subnets             = "${data.aws_subnet.example.*.id}"
 }
 
@@ -114,7 +113,6 @@ resource "aws_autoscaling_group" "TF_auto_scaling_group" {
   force_delete              = true
   target_group_arns         = ["${aws_lb_target_group.TF_target_group.arn}"]
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  #vpc_zone_identifier       = "${var.subnet_ids}" # список зон нужно настроить брать автоматически
   vpc_zone_identifier       = "${data.aws_subnet.example.*.id}"
   tags = [
       {
