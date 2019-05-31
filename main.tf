@@ -1,17 +1,18 @@
 provider "aws" {
-    access_key = "AKIAJECVMYQBGQWDS6YQ"
-    secret_key = "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"
-    region = "eu-west-3"
+    access_key = "${var.access_key}"
+    secret_key = "${var.secret_key}"
+    region = "${var.region}"
 }
 
 data "aws_vpc" "selected" {
 }
-data "aws_subnet_ids" "selected" {
+data "aws_subnet_ids" "example" {
   vpc_id = "${data.aws_vpc.selected.id}"
 }
-output "subnets" {
-  value = "${data.aws_subnet_ids.selected.*.ids}"
-  #value = "${element(data.aws_subnet_ids.selected.ids, count.index)}"
+
+data "aws_subnet" "example" {
+  count = "${length(data.aws_subnet_ids.example.ids)}"
+  id    = "${tolist(data.aws_subnet_ids.example.ids)[count.index]}"
 }
 
 # security groups
@@ -25,7 +26,7 @@ resource "aws_security_group" "TF_HTTP_INTERNAL_ONLY" {
     from_port   = 80
     to_port     = 80
     protocol    = "TCP"
-    cidr_blocks     = ["172.31.0.0/16"] # нужно настроить автоматически брать из зоны адрес сети
+    cidr_blocks     = "${data.aws_subnet.example.*.cidr_block}"
   }
   egress {
     from_port       = 0
@@ -86,8 +87,8 @@ resource "aws_lb" "TF_ALB" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.TF_HTTP_ONLY.id}"]
-  subnets            = "${var.subnet_ids}"
-  #subnets             = "${data.aws_subnet_ids.selected.*.ids}"
+  #subnets            = "${var.subnet_ids}"
+  subnets             = "${data.aws_subnet.example.*.id}"
 }
 
 #listener for load balancer
@@ -109,11 +110,12 @@ resource "aws_autoscaling_group" "TF_auto_scaling_group" {
   min_size                  = 0
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  desired_capacity          = 1
+  desired_capacity          = 4
   force_delete              = true
   target_group_arns         = ["${aws_lb_target_group.TF_target_group.arn}"]
   launch_configuration      = "${aws_launch_configuration.as_conf.name}"
-  vpc_zone_identifier       = "${var.subnet_ids}" # список зон нужно настроить брать автоматически
+  #vpc_zone_identifier       = "${var.subnet_ids}" # список зон нужно настроить брать автоматически
+  vpc_zone_identifier       = "${data.aws_subnet.example.*.id}"
   tags = [
       {
         key                 = "Name"
