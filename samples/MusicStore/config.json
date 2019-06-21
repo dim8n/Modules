@@ -3,7 +3,7 @@
     "SiteTitle": "ASP.NET MVC Music Store",
     "CacheDbResults": true
   },
-  "DefaultAdminUsername": "N93820\123123123",
+  "DefaultAdminUsername": "N93820\\123123123",
   "DefaultAdminPassword": "123123123",
   "Data": {
     "DefaultConnection": {
